@@ -450,10 +450,10 @@ function genmeow()
 	end
 end
 
-concommand.Add("fesi_buymenu", function()
+concommand.Add("tcred_buymenu", function()
 	genmeow()
 end)
-concommand.Add("fesi_listweps", function()
+concommand.Add("tcred_listweps", function()
 	listitout()
 end)
 --genmeow()
