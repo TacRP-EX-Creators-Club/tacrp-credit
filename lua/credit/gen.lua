@@ -268,3 +268,8 @@ end)
 concommand.Add("tcred_regen", function()
 	TacRPCredit.Regen()
 end)
+if CLIENT then
+    concommand.Add("tcred_regen_cl", function()
+        TacRPCredit.Regen()
+    end)
+end

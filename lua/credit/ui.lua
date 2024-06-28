@@ -35,6 +35,7 @@ surface.CreateFont( "CHR_8I", {
 })
 
 local rtc = {
+	["Value"]			= Color( 100,		84,		86 ),
 	["Consumer"]		= Color( 100,		116,	124 ),
 	["Security"]		= Color( 79,		143,	228 ),
 	["Operator"]		= Color( 100,		20,		220 ),
