@@ -1,193 +1,185 @@
 
 local fn = "Myriad Pro"--"Bahnschrift"
-surface.CreateFont( "CHR_12", {
+surface.CreateFont( "CHR_24", {
 	font = fn,
-	size = ScreenScaleH(12),
+	size = 24,
 	weight = 0,
 })
-surface.CreateFont( "CHR_10", {
+surface.CreateFont( "CHR_20", {
 	font = fn,
-	size = ScreenScaleH(10),
+	size = 20,
 	weight = 0,
 })
-surface.CreateFont( "CHR_8", {
+surface.CreateFont( "CHR_16", {
 	font = fn,
-	size = ScreenScaleH(8),
+	size = 16,
 	weight = 0,
 })
-surface.CreateFont( "CHR_12I", {
+surface.CreateFont( "CHR_24I", {
 	font = fn,
-	size = ScreenScaleH(12),
+	size = 24,
 	italic = true,
 	weight = 0,
 })
-surface.CreateFont( "CHR_10I", {
+surface.CreateFont( "CHR_20I", {
 	font = fn,
-	size = ScreenScaleH(10),
+	size = 20,
 	italic = true,
 	weight = 0,
 })
-surface.CreateFont( "CHR_8I", {
+surface.CreateFont( "CHR_16I", {
 	font = fn,
-	size = ScreenScaleH(8),
+	size = 16,
 	italic = true,
 	weight = 0,
 })
 
 local rtc = {
-	["Value"]			= Color( 100,		84,		86 ),
-	["Consumer"]		= Color( 100,		116,	124 ),
+	["Value"]			= Color( 85,		84,		86 ),
+	["Consumer"]		= Color( 100,		116,	134 ),
 	["Security"]		= Color( 79,		143,	228 ),
 	["Operator"]		= Color( 100,		20,		220 ),
 	["Elite"]			= Color( 240,		44,		44 ),
-	["Special"]			= Color( 255,		126,	40 ),
+	["Special"]			= Color( 155,		126,	110 ),
 }
-local mony = Color( 60, 100, 100 )
+local mony = Color( 0, 150, 0 )
 
 local mat_c = Material( "tacrp_credit/coalition.png", "smooth" )
 local mat_m = Material( "tacrp_credit/militia.png", "smooth" )
 
-local function hp( self, w, h )
-	local s = ScreenScaleH
-
-	surface.SetDrawColor( 200, 200, 200 )
-	surface.DrawRect( 0, 0, w, h )
-
-	draw.SimpleText( self.Text_Name, "CHR_10", s(4), s(1), color_black )
-	return true
-end
-
-local function hp2( self, w, h )
-	local s = ScreenScaleH
-
-	surface.SetDrawColor( self.Text_Color )
-	surface.DrawRect( 0, 0, w, h )
-
-	draw.SimpleText( self.Text_Name, "CHR_10I", s(4), s(2), color_black )
-	draw.SimpleText( self.Text_Name, "CHR_10I", s(4), s(1), color_white )
-	return true
-end
-
-local function hp3( self, w, h )
-	local s = ScreenScaleH
-
-	surface.SetDrawColor( 255, 255, 255 )
-	surface.DrawRect( 0, 0, w, h )
-
-	if self.Text_Faction == TacRP.FACTION_COALITION then
-		surface.SetDrawColor( 255, 255, 255 )
-		surface.SetMaterial( mat_c )
-		surface.DrawTexturedRect( w-s(36)-h, 0, h, h )
-	elseif self.Text_Faction == TacRP.FACTION_MILITIA then
-		surface.SetDrawColor( 255, 255, 255 )
-		surface.SetMaterial( mat_m )
-		surface.DrawTexturedRect( w-s(36)-h, 0, h, h )
-	end
-
-	draw.SimpleText( self.Text_Name, "CHR_10", s(4), s(0), color_black )
-	draw.SimpleText( self.Text_Cost.." $", "CHR_10", w-s(4), s(0), mony, TEXT_ALIGN_RIGHT )
-	return true
-end
-
 function TacRPCredit.Shop()
-	local s = ScreenScaleH
-	if meow then meow:Remove() end
-	meow = vgui.Create("DFrame")
-	meow:SetSize( s(260), s(360) )
-	meow:Center()
-	--meow:SetX( s(160) )
-	meow:MakePopup()
-	meow:SetKeyboardInputEnabled(false)
+	if Frame then Frame:Remove() Frame = nil end
+	Frame = vgui.Create( "DFrame" ) -- Create a Frame to contain everything.
+	Frame:SetTitle( "TCred2" )
+	Frame:SetSize( 5+100+5+4+4+154+154+154+154+154, 650 )
+	Frame:Center()
+	Frame:MakePopup()
+	Frame:SetSizable( true )
 
-	meow:DockPadding( s(2), 20+s(2), s(2), s(2) )
+	local sheet = vgui.Create( "DColumnSheet", Frame )
+	sheet.Navigation:SetWidth( 100 )
+	sheet.Navigation:DockMargin( 0, 0, 4, 0 )
+	sheet:Dock( FILL )
 
-	function meow:Paint( w, h )
-		surface.SetDrawColor( color_black )
-		surface.DrawRect( 0, 0, w, h )
-		return true
-	end
+	for t1_name, t1_info in SortedPairs( TacRPCredit.Cats ) do
 
-	local sp = meow:Add("DScrollPanel")
-	sp:Dock( FILL )
-	sp.VBar:SetWide(0)
+		local TypeName = t1_name:Right(-2)
 
-	meow.typeheaders = {}
-	for type_name, type_table in SortedPairs( TacRPCredit.Cats ) do
-		local header = sp:Add("DButton")
-		meow.typeheaders[type_name] = header
-		header.Text_Name = type_name:Right( -2 )
-		header:SetTall( s(12) )
-		header:Dock(TOP)
-		header:DockMargin( 0, 0, 0, s(2) )
-		header:DockPadding( 0, s(1), s(1), s(1) )
+		local panel1 = vgui.Create( "DPanel", sheet )
+		panel1.Paint = function( self, w, h ) return true end 
+		panel1:Dock(FILL)
+		sheet:AddSheet( TypeName, panel1 )
 
-		header.Paint = hp
-		header.Enabled = false
+		local scroller = panel1:Add("DScrollPanel")
+		scroller:Dock(FILL)
+		scroller.VBar:SetWide(0)
+		
+		-- header.tierheaders[tier_name] = header_tier
+		-- header_tier.Text_Name = tier_name:Right( -2 )
+		-- header_tier.Text_Color = rtc[header_tier.Text_Name]
 
-		header.tierheaders = {}
-		function header:DoClick()
-			for i, v in pairs( meow.typeheaders ) do
-				v.Enabled = (v==self) and (!v.Enabled)
-				if v.Enabled then
-					for _, k in pairs( v.tierheaders ) do
-						k:Show()
-					end
-					v:InvalidateLayout( true )
-					v:SizeToChildren( false, true )
-				else
-					for _, k in pairs( v.tierheaders ) do
-						k:Hide()
-					end
-					v:SetTall( s(12) )
+		local typeheaders = {}
+		for tier_name, tier_table in SortedPairs( t1_info ) do
+			local ccat = scroller:Add("DCollapsibleCategory")
+			ccat.Text_Name = tier_name:Right( -2 )
+			ccat.Text_Color = rtc[ccat.Text_Name] or color_white
+			ccat:Dock(TOP)
+			ccat:DockPadding( 4, 0, 0, 0 )
+			ccat:SetLabel( ccat.Text_Name )
+
+			function ccat:Paint( w, h )
+				surface.SetDrawColor( ccat.Text_Color )
+				surface.DrawRect( 0, 0, w, h )
+			end
+
+			local grid = vgui.Create("DGrid", ccat)
+			grid:Dock( TOP )
+			grid:SetCols( 4 )
+			grid:SetColWide( 150+4 )
+			grid:SetRowHeight( 75+4 )
+
+			local ccatp = ccat.PerformLayout
+			function ccat:PerformLayout(w, h)
+				ccatp(ccat, w, h)
+				grid:SetCols( math.floor(self:GetWide()/(150+4)) )
+			end
+
+			for i, classname in ipairs(tier_table) do
+				local weapon = vgui.Create("DButton")
+				weapon:SetSize( 150, 75 )
+
+				local it = weapons.GetStored(classname)
+				if !it then
+					print( classname .. " isn't real, skipping" )
+					continue
 				end
-			end
-			return true
-		end
+				local Text_Name = it.AbbrevName or it.PrintName
+				local Text_Cost = TacRPCredit.DefinedItems[classname]
+				local Text_Faction = it.Faction
 
-		for tier_name, tier_table in SortedPairs( type_table ) do
-			local header_tier = header:Add("DPanel")
-			header.tierheaders[tier_name] = header_tier
-			header_tier.Text_Name = tier_name:Right( -2 )
-			header_tier.Text_Color = rtc[header_tier.Text_Name]
-			header_tier.Text_Drop = #tier_table == 1
-			header_tier:SetTall( s(12) )
-			header_tier:Hide() --
-			header_tier:Dock(TOP)
-			header_tier:DockMargin( s(68), 0, 0, s(1) )
-			header_tier:DockPadding( s(44+1), s(1), s(1), s(1) )
+				function weapon:Paint(w, h)
+					surface.SetDrawColor( 255, 255, 255, 16 )
+					surface.DrawRect( 0, 0, w, h )
+
+					surface.SetDrawColor( 255, 255, 255 )
+					local themat = Material( "entities/" .. classname .. ".png" )
+					surface.SetMaterial( themat, "mips smooth" )
 				
-			header_tier.Paint = hp2
+					local blep = h*2
+					surface.DrawTexturedRect( w/2 - blep/2, h/2 - blep/2, blep, blep )
+					
 
-			local moneysorter = {}
-			for i, v in ipairs( tier_table ) do
-				moneysorter[v] = TacRPCredit.DefinedItems[v]
-			end
+					surface.SetFont("CHR_20")
+					local tns = surface.GetTextSize(Text_Name)
+					surface.SetDrawColor( 0, 0, 0, 200 )
+					surface.DrawRect( 0, h - 20, 4+tns+4, 20 )
+				
+					-- name
+					draw.SimpleText( Text_Name, "CHR_20", 4-1, h-20-1, color_black )
+					draw.SimpleText( Text_Name, "CHR_20", 4,   h-20-1, color_black )
+					draw.SimpleText( Text_Name, "CHR_20", 4+1, h-20-1, color_black )
+				
+					draw.SimpleText( Text_Name, "CHR_20", 4-1, h-20, color_black )
 
-			for i, v in SortedPairsByValue( moneysorter, true ) do
-				local header_weapon = header_tier:Add("DButton")
-				local it = weapons.GetStored(i)
-				header_weapon.Text_Name = it.PrintName
-				header_weapon.Text_Cost = TacRPCredit.DefinedItems[i]
-				header_weapon.Text_Faction = it.Faction
-				header_weapon:SetTall( s(10) )
-				header_weapon:Dock(TOP)
-				header_weapon:DockMargin( 0, 0, 0, s(2) )
-				header_weapon.Paint = hp3
+					draw.SimpleText( Text_Name, "CHR_20", 4+1, h-20, color_black )
+			
+					draw.SimpleText( Text_Name, "CHR_20", 4-1, h-20+1, color_black )
+					draw.SimpleText( Text_Name, "CHR_20", 4,   h-20+1, color_black )
+					draw.SimpleText( Text_Name, "CHR_20", 4+1, h-20+1, color_black )
 
-				function header_weapon:DoClick()
+					draw.SimpleText( Text_Name, "CHR_20", 4, h-20, color_white )
+
+					-- money
+					--draw.SimpleText( Text_Cost.." $", "CHR_24I", w-4-1, -1, color_white, TEXT_ALIGN_RIGHT )
+					--draw.SimpleText( Text_Cost.." $", "CHR_24I", w-4,   -1, color_white, TEXT_ALIGN_RIGHT )
+					--draw.SimpleText( Text_Cost.." $", "CHR_24I", w-4+1, -1, color_white, TEXT_ALIGN_RIGHT )
+--
+					--draw.SimpleText( Text_Cost.." $", "CHR_24I", w-4-1, 0, color_white, TEXT_ALIGN_RIGHT )
+--
+					--draw.SimpleText( Text_Cost.." $", "CHR_24I", w-4+1, 0, color_white, TEXT_ALIGN_RIGHT )
+--
+					--draw.SimpleText( Text_Cost.." $", "CHR_24I", w-4-1, 1, color_white, TEXT_ALIGN_RIGHT )
+					--draw.SimpleText( Text_Cost.." $", "CHR_24I", w-4,   1, color_white, TEXT_ALIGN_RIGHT )
+					--draw.SimpleText( Text_Cost.." $", "CHR_24I", w-4+1, 1, color_white, TEXT_ALIGN_RIGHT )
+					
+
+					
+					surface.SetFont("CHR_16I")
+					local tns = surface.GetTextSize(Text_Cost.." $")
+					surface.SetDrawColor( 0, 150, 0 )
+					surface.DrawRect( w-tns-2-2, 0, tns+2+2, 16 )
+					draw.SimpleText( Text_Cost.." $", "CHR_16I", w-2, 0, color_white, TEXT_ALIGN_RIGHT )
+
 					return true
 				end
+				grid:AddItem(weapon)
 			end
-
-			header_tier:InvalidateLayout( true )
-			header_tier:SizeToChildren( false, true )
 		end
 
-		-- header:InvalidateLayout( true )
-		-- header:SizeToChildren( false, true )
 	end
+
 end
 
-concommand.Add("tcred_buymenu", function()
-	TacRPCredit.Shop()
-end)
+concommand.Add("tcred_buymenu", TacRPCredit.Shop)
+
+--TacRPCredit.Shop()
