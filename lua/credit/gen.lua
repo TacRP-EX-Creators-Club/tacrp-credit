@@ -167,6 +167,7 @@ TacRPCredit.DefinedItems = {
     -- Machine Gun
         -- Elite
         ["tacrp_mg4"]                           = 100,
+        ["tacrp_h_hk23e"]                       = 100,
         -- Operator
         ["tacrp_sd_pkm"]                        = 100,
         ["tacrp_io_xm8lmg"]                     = 100,
@@ -323,7 +324,7 @@ TacRPCredit.DefinedItems = {
         ["tacrp_nade_gas"]                      = 100,
 }
 
-TacRPCredit.Cats = TacRPCredit.Cats or {}
+TacRPCredit.Cats = {}
 
 function TacRPCredit.Regen()
 	for class, cash in pairs( TacRPCredit.DefinedItems ) do
