@@ -331,6 +331,19 @@ function TacRPCredit.Regen()
 		-- Call this after InitPostEntity
 		-- GetStored won't get the grenades SubCatTier and Type
 		if class == "tacrp_base" or class == "tacrp_base_knife" or class == "tacrp_base_nade" then continue end
+		
+		if false then
+			local lol
+			lol = "tacrp_h_" if class:Left(#lol) == lol then continue end
+			lol = "tacrp_eo_" if class:Left(#lol) == lol then continue end
+			lol = "tacrp_io_" if class:Left(#lol) == lol then continue end
+			lol = "tacrp_ex_" if class:Left(#lol) == lol then continue end
+			lol = "tacrp_sd_" if class:Left(#lol) == lol then continue end
+			lol = "tacrp_m_" if class:Left(#lol) == lol then continue end
+			lol = "tacrp_ak_" if class:Left(#lol) == lol then continue end
+			lol = "tacrp_ar_" if class:Left(#lol) == lol then continue end
+			lol = "tacrp_pa_" if class:Left(#lol) == lol then continue end
+		end
 		local wt = weapons.Get(class)
 
 		do
