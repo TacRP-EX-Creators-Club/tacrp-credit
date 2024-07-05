@@ -182,7 +182,7 @@ function TacRPCredit.Shop()
 			local ccatp = ccat.PerformLayout
 			function ccat:PerformLayout(w, h)
 				ccatp(ccat, w, h)
-				grid:SetCols( math.floor(self:GetWide()/(150+4)) )
+				grid:SetCols( math.max( math.floor(self:GetWide()/(150+5)), 1 ) )
 			end
 
 			for i, classname in ipairs(tier_table) do
